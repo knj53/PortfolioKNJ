@@ -1,0 +1,1095 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kenji Gulaga — Photography</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500&family=Inter+Tight:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================
+       Tokens & base
+       ============================================ */
+    :root {
+      --paper: #F2EFE8;
+      --paper-2: #ECE7DC;
+      --ink: #0E0E0C;
+      --ink-2: #2A2926;
+      --mid: #6B6862;
+      --mid-2: #94908A;
+      --hair: #E2DDD2;
+      --hair-2: #D6CFBF;
+      --accent: #8A2A14;
+      --serif: "Cormorant Garamond", "EB Garamond", Georgia, serif;
+      --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+      --pad: 32px;
+      --pad-l: 56px;
+      --hairline: 1px;
+      --ease: cubic-bezier(.2,.7,.2,1);
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      background: var(--paper); color: var(--ink);
+      font-family: var(--mono); font-size: 12px; line-height: 1.5;
+      letter-spacing: 0.01em;
+      -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+    img { display: block; max-width: 100%; }
+    ::selection { background: var(--ink); color: var(--paper); }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-thumb { background: var(--hair-2); border-radius: 0; }
+    ::-webkit-scrollbar-track { background: transparent; }
+
+    /* ============================================
+       App shell
+       ============================================ */
+    .app { min-height: 100vh; display: flex; flex-direction: column; }
+
+    .topbar {
+      position: sticky; top: 0; z-index: 50;
+      display: grid; grid-template-columns: 1fr auto 1fr;
+      align-items: center; padding: 18px var(--pad-l);
+      background: var(--paper);
+      border-bottom: var(--hairline) solid transparent;
+      transition: border-color .3s var(--ease);
+    }
+    .topbar.is-stuck { border-color: var(--hair); }
+    .topbar__brand {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
+      text-transform: uppercase; display: flex; gap: 14px; align-items: baseline;
+    }
+    .topbar__brand .mark {
+      font-family: var(--serif); font-size: 18px; font-style: italic;
+      font-weight: 400; letter-spacing: -0.01em; text-transform: none;
+    }
+    .topbar__center {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--mid);
+    }
+    .topbar__nav {
+      justify-self: end; display: flex; gap: 28px;
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+    }
+    .topbar__nav button { position: relative; padding: 4px 0; color: var(--mid); transition: color .25s var(--ease); }
+    .topbar__nav button:hover { color: var(--ink); }
+    .topbar__nav button.is-active { color: var(--ink); }
+    .topbar__nav button.is-active::after {
+      content: ""; position: absolute; left: 0; right: 0; bottom: -2px;
+      height: 1px; background: var(--ink);
+    }
+
+    .page { flex: 1; animation: pageIn .5s var(--ease) both; }
+    @keyframes pageIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .footer {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      padding: 48px var(--pad-l) 32px;
+      border-top: var(--hairline) solid var(--hair);
+      font-family: var(--mono); font-size: 10.5px;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--mid); margin-top: 80px;
+    }
+    .footer__col strong { color: var(--ink); font-weight: 500; display: block; margin-bottom: 10px; }
+    .footer__col a { display: block; padding: 3px 0; }
+    .footer__col a:hover { color: var(--ink); }
+
+    /* ============================================
+       Placeholder image
+       ============================================ */
+    .ph {
+      position: relative; width: 100%;
+      background: repeating-linear-gradient(
+        var(--ph-angle, 135deg),
+        var(--ph-a, #8E8A82) 0 1px,
+        var(--ph-b, #7A7770) 1px 8px
+      );
+      overflow: hidden; isolation: isolate;
+    }
+    .ph::before {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,.18));
+      pointer-events: none;
+    }
+    .ph.has-img::before { background: none; }
+    .ph__img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      opacity: 0; transition: opacity .5s var(--ease);
+      display: block;
+    }
+    .ph__img.is-loaded { opacity: 1; }
+    .lightbox__plate .ph__img { object-fit: contain; }
+    .ph__tag {
+      position: absolute; left: 14px; bottom: 12px;
+      font-family: var(--mono); font-size: 10px;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: rgba(255,255,255,.92);
+      background: rgba(0,0,0,.35); backdrop-filter: blur(2px);
+      padding: 5px 8px; border: 1px solid rgba(255,255,255,.18);
+    }
+    .ph[data-tone="warm"]   { --ph-a: #6B5A4A; --ph-b: #5A4B3D; }
+    .ph[data-tone="cool"]   { --ph-a: #4D5862; --ph-b: #3F4953; }
+    .ph[data-tone="green"]  { --ph-a: #4A5A4D; --ph-b: #3D4C40; }
+    .ph[data-tone="ink"]    { --ph-a: #2A2926; --ph-b: #181715; }
+    .ph[data-tone="bone"]   { --ph-a: #B5AE9F; --ph-b: #9C9485; }
+    .ph[data-tone="rust"]   { --ph-a: #7A4A3A; --ph-b: #65392C; }
+    .ph[data-tone="dust"]   { --ph-a: #8C8478; --ph-b: #756D62; }
+    .ph[data-tone="slate"]  { --ph-a: #5A6168; --ph-b: #474D54; }
+
+    /* ============================================
+       HOME
+       ============================================ */
+    .home { padding: 0 var(--pad-l) 0; }
+    .home__hero { display: grid; grid-template-columns: 1fr; gap: 18px; padding-top: 24px; }
+    .home__plate { position: relative; width: 100%; aspect-ratio: 16 / 9; cursor: pointer; transition: opacity .4s var(--ease); }
+    .home__plate .ph { width: 100%; height: 100%; }
+    .home__caption { display: grid; grid-template-columns: auto 1fr auto auto; gap: 32px; align-items: baseline; padding-top: 8px; }
+    .home__caption .idx { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; color: var(--mid); }
+    .home__caption .title { font-family: var(--serif); font-size: 28px; font-style: italic; font-weight: 400; letter-spacing: -0.01em; line-height: 1; }
+    .home__caption .meta { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--mid); }
+    .home__pager { display: flex; gap: 6px; margin-top: 24px; }
+    .home__pager button { width: 36px; height: 2px; background: var(--hair-2); transition: background .25s var(--ease); }
+    .home__pager button.is-active { background: var(--ink); }
+    .home__arrow {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      width: 40px; height: 40px;
+      display: grid; place-items: center;
+      font-family: var(--mono); font-size: 16px; line-height: 1;
+      color: rgba(255,255,255,.85);
+      background: rgba(14,14,12,.28);
+      border: 1px solid rgba(255,255,255,.18);
+      backdrop-filter: blur(2px);
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity .25s var(--ease), background .2s var(--ease), color .2s var(--ease);
+      z-index: 2;
+    }
+    .home__plate:hover .home__arrow { opacity: 1; }
+    .home__arrow:hover { background: rgba(14,14,12,.55); color: #fff; }
+    .home__arrow--prev { left: 14px; }
+    .home__arrow--next { right: 14px; }
+    @media (max-width: 900px) {
+      .home__arrow { opacity: 1; width: 36px; height: 36px; }
+    }
+    .home__strip { margin-top: 90px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 32px; align-items: end; }
+    .home__strip .head { font-family: var(--serif); font-size: 64px; font-style: italic; font-weight: 400; line-height: 0.95; letter-spacing: -0.02em; margin: 0; text-wrap: pretty; }
+    .home__strip .lede { font-family: var(--serif); font-size: 20px; font-weight: 400; line-height: 1.35; color: var(--ink-2); text-wrap: pretty; }
+    .home__strip .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 24px; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; }
+    .home__strip .stats span { color: var(--mid); display: block; }
+    .home__strip .stats strong { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 26px; letter-spacing: -0.01em; text-transform: none; display: block; margin-top: 2px; }
+    .home__recent { margin-top: 110px; }
+    .home__recent h2 { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 400; color: var(--mid); margin: 0 0 18px; padding-bottom: 12px; border-bottom: 1px solid var(--hair); display: flex; justify-content: space-between; }
+    .home__recent h2 .count { color: var(--ink); }
+    .home__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+    .tile { cursor: pointer; transition: opacity .3s var(--ease); }
+    .tile .ph { aspect-ratio: 4/5; }
+    .tile .meta { display: flex; justify-content: space-between; margin-top: 10px; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; }
+    .tile .meta .t { font-family: var(--serif); font-size: 18px; font-style: italic; text-transform: none; letter-spacing: -0.01em; color: var(--ink); }
+    .tile .meta .y { color: var(--mid); }
+    .home__grid:hover .tile { opacity: .35; }
+    .home__grid .tile:hover { opacity: 1; }
+
+    /* ============================================
+       WORK
+       ============================================ */
+    .work { padding: 32px var(--pad-l) 0; }
+    .work__head { display: grid; grid-template-columns: 1fr auto auto; gap: 32px; align-items: baseline; padding-bottom: 18px; border-bottom: 1px solid var(--hair); font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--mid); }
+    .work__head h1 { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 56px; letter-spacing: -0.02em; line-height: 1; margin: 0; color: var(--ink); text-transform: none; }
+    .work__filters { display: flex; gap: 18px; padding: 18px 0; border-bottom: 1px solid var(--hair); font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; }
+    .work__filters button { color: var(--mid); padding: 4px 0; position: relative; transition: color .2s var(--ease); }
+    .work__filters button:hover { color: var(--ink); }
+    .work__filters button.is-on { color: var(--ink); }
+    .work__filters button.is-on::after { content: ""; position: absolute; left: 0; right: 0; bottom: -2px; height: 1px; background: var(--ink); }
+    .work__row { display: grid; grid-template-columns: 60px 1fr 200px 140px 80px; gap: 24px; align-items: center; padding: 22px 0; border-bottom: 1px solid var(--hair); font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--mid); cursor: pointer; transition: opacity .25s var(--ease), color .25s var(--ease); position: relative; }
+    .work__list:hover .work__row { opacity: .35; }
+    .work__list .work__row:hover { opacity: 1; color: var(--ink); }
+    .work__row .num { color: var(--mid); }
+    .work__row .ttl { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 32px; letter-spacing: -0.015em; text-transform: none; color: var(--ink); line-height: 1; }
+    .work__row .arr { text-align: right; font-family: var(--serif); font-size: 22px; font-style: italic; color: var(--ink); opacity: 0; transform: translateX(-6px); transition: opacity .25s var(--ease), transform .25s var(--ease); }
+    .work__row:hover .arr { opacity: 1; transform: translateX(0); }
+
+    /* ============================================
+       PROJECT
+       ============================================ */
+    .proj__back { display: inline-flex; gap: 8px; align-items: center; margin: 24px var(--pad-l) 32px; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--mid); }
+    .proj__back:hover { color: var(--ink); }
+    .proj__head { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; padding: 0 var(--pad-l) 56px; border-bottom: 1px solid var(--hair); align-items: end; }
+    .proj__head h1 { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 96px; line-height: 0.92; letter-spacing: -0.025em; margin: 0; text-wrap: balance; }
+    .proj__head .meta { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 32px; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; }
+    .proj__head .meta dt { color: var(--mid); margin-bottom: 4px; }
+    .proj__head .meta dd { margin: 0; color: var(--ink); font-family: var(--serif); font-size: 19px; font-style: italic; letter-spacing: -0.01em; text-transform: none; }
+    .proj__head .desc { grid-column: 1 / -1; font-family: var(--serif); font-size: 22px; line-height: 1.4; color: var(--ink-2); max-width: 64ch; text-wrap: pretty; margin: 0; text-transform: none; letter-spacing: 0; }
+    .proj__counter { position: fixed; bottom: 28px; left: var(--pad-l); z-index: 40; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--mid); background: var(--paper); padding: 6px 10px; border: 1px solid var(--hair); display: flex; gap: 8px; align-items: center; }
+    .proj__counter strong { color: var(--ink); font-weight: 500; }
+    .proj__stack { padding: 64px var(--pad-l); display: grid; gap: 56px; }
+    .proj__shot { position: relative; cursor: zoom-in; }
+    /* Each shot uses the photo's actual aspect ratio (set inline as --shot-ratio).
+       Sizes are tuned so most photos fit in the viewport without scrolling. */
+    .proj__shot--natural { margin: 0 auto; }
+    .proj__shot--natural.is-landscape { width: min(62%, 880px); }
+    .proj__shot--natural.is-portrait  { width: min(34%, 440px); }
+    .proj__shot--natural .ph { aspect-ratio: var(--shot-ratio, 3 / 2); width: 100%; }
+    /* Two portraits side-by-side */
+    .proj__row { margin: 0 auto; }
+    .proj__row--pair {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 28px;
+      max-width: min(64%, 880px);
+    }
+    .proj__row--pair .proj__shot--natural,
+    .proj__row--pair .proj__shot--natural.is-portrait { width: 100%; }
+    .proj__shot .cap { margin-top: 12px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mid); display: flex; justify-content: space-between; }
+    @media (max-width: 900px) {
+      .proj__shot--natural,
+      .proj__shot--natural.is-portrait,
+      .proj__shot--natural.is-landscape { width: 100%; }
+      .proj__row--pair { grid-template-columns: 1fr; max-width: 100%; gap: 32px; }
+    }
+
+    .lightbox { position: fixed; inset: 0; background: rgba(14,14,12,.96); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 56px; animation: fadein .25s var(--ease) both; }
+    @keyframes fadein { from { opacity: 0 } to { opacity: 1 } }
+    .lightbox__plate { width: 90%; height: 100%; max-width: 1400px; }
+    .lightbox__plate .ph { width: 100%; height: 100%; }
+    .lightbox__close { position: absolute; top: 24px; right: 32px; color: var(--paper); font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; display: flex; gap: 10px; align-items: center; }
+    .lightbox__nav { position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); color: var(--paper); font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; display: flex; gap: 24px; align-items: center; }
+    .lightbox__nav button { color: var(--paper); opacity: .6; }
+    .lightbox__nav button:hover { opacity: 1; }
+
+    .proj__next { border-top: 1px solid var(--hair); padding: 56px var(--pad-l); display: grid; grid-template-columns: 1fr auto 1fr; gap: 32px; align-items: center; }
+    .proj__next .label { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--mid); }
+    .proj__next .next-title { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 72px; line-height: 1; letter-spacing: -0.025em; cursor: pointer; text-align: center; margin: 0; transition: color .25s var(--ease); }
+    .proj__next .next-title:hover { color: var(--accent); }
+
+    /* ============================================
+       CONTACT
+       ============================================ */
+    .contact { padding: 56px var(--pad-l) 0; display: grid; grid-template-columns: 1.2fr 1fr; gap: 80px; min-height: 70vh; }
+    .contact__head h1 { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 124px; line-height: 0.9; letter-spacing: -0.03em; margin: 0 0 32px; text-wrap: balance; }
+    .contact__lede { font-family: var(--serif); font-size: 22px; line-height: 1.4; max-width: 50ch; color: var(--ink-2); margin: 0 0 48px; text-wrap: pretty; }
+    .contact__details { display: grid; gap: 28px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; }
+    .contact__details .row { display: grid; grid-template-columns: 100px 1fr; gap: 24px; padding: 14px 0; border-top: 1px solid var(--hair); }
+    .contact__details .row:last-child { border-bottom: 1px solid var(--hair); }
+    .contact__details .row .k { color: var(--mid); }
+    .contact__details .row .v { color: var(--ink); font-family: var(--serif); font-size: 19px; font-style: italic; letter-spacing: -0.01em; text-transform: none; }
+    .contact__details .row .v a { border-bottom: 1px solid var(--hair-2); }
+    .contact__details .row .v a:hover { border-bottom-color: var(--ink); }
+    .contact__form { border-left: 1px solid var(--hair); padding-left: 56px; }
+    .contact__form .field { display: grid; gap: 8px; padding: 18px 0; border-bottom: 1px solid var(--hair); }
+    .contact__form .field label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--mid); }
+    .contact__form .field input,
+    .contact__form .field textarea,
+    .contact__form .field select { background: transparent; border: 0; font-family: var(--serif); font-size: 22px; font-style: italic; color: var(--ink); padding: 4px 0; outline: none; resize: none; letter-spacing: -0.01em; }
+    .contact__form .field input::placeholder,
+    .contact__form .field textarea::placeholder { color: var(--mid-2); font-style: italic; }
+    .contact__form .submit { margin-top: 28px; display: inline-flex; align-items: center; gap: 12px; padding: 14px 18px; border: 1px solid var(--ink); font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; background: var(--ink); color: var(--paper); transition: background .25s var(--ease), color .25s var(--ease); }
+    .contact__form .submit:hover { background: transparent; color: var(--ink); }
+    .contact__form .submit.is-sent { background: var(--paper); color: var(--ink); }
+    .contact__form .field-error { font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; color: var(--accent); text-transform: uppercase; margin-top: 4px; }
+
+    /* ============================================
+       Responsive
+       ============================================ */
+    @media (max-width: 900px) {
+      :root { --pad-l: 24px; }
+      .home__strip,
+      .proj__head,
+      .contact { grid-template-columns: 1fr; gap: 32px; }
+      .home__grid { grid-template-columns: 1fr 1fr; }
+      .work__row { grid-template-columns: 40px 1fr 80px; }
+      .work__row .meta-yr, .work__row .meta-tag { display: none; }
+      .home__strip .head, .work__head h1 { font-size: 44px; }
+      .proj__head h1 { font-size: 56px; }
+      .contact__head h1 { font-size: 64px; }
+      .contact__form { border-left: 0; padding-left: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+
+  <script>
+    /* Photo manifest — generated from web/ folder via build_web_photos.py. */
+    window.PHOTOS = {
+      "Documentary/B&R Wedding - 2025": [
+        {"full": "web/Documentary/B&R Wedding - 2025/_DSC0243-2.jpg", "thumb": "web/Documentary/B&R Wedding - 2025/_DSC0243-2@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Documentary/B&R Wedding - 2025/_DSC0246.jpg", "thumb": "web/Documentary/B&R Wedding - 2025/_DSC0246@thumb.jpg", "w": 2200, "h": 1466},
+        {"full": "web/Documentary/B&R Wedding - 2025/_DSC0252.jpg", "thumb": "web/Documentary/B&R Wedding - 2025/_DSC0252@thumb.jpg", "w": 2200, "h": 1466},
+        {"full": "web/Documentary/B&R Wedding - 2025/_DSC0300.jpg", "thumb": "web/Documentary/B&R Wedding - 2025/_DSC0300@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Documentary/B&R Wedding - 2025/_DSC0594.jpg", "thumb": "web/Documentary/B&R Wedding - 2025/_DSC0594@thumb.jpg", "w": 1760, "h": 2200},
+        {"full": "web/Documentary/B&R Wedding - 2025/_DSC0673.jpg", "thumb": "web/Documentary/B&R Wedding - 2025/_DSC0673@thumb.jpg", "w": 2200, "h": 1466},
+        {"full": "web/Documentary/B&R Wedding - 2025/_DSC0678.jpg", "thumb": "web/Documentary/B&R Wedding - 2025/_DSC0678@thumb.jpg", "w": 2200, "h": 1466},
+        {"full": "web/Documentary/B&R Wedding - 2025/_DSC0848.jpg", "thumb": "web/Documentary/B&R Wedding - 2025/_DSC0848@thumb.jpg", "w": 1466, "h": 2200},
+      ],
+      "Documentary/Butbut tribe - 2024": [
+        {"full": "web/Documentary/Butbut tribe - 2024/_DSC0242.jpg", "thumb": "web/Documentary/Butbut tribe - 2024/_DSC0242@thumb.jpg", "w": 2200, "h": 1237},
+        {"full": "web/Documentary/Butbut tribe - 2024/_DSC0243.jpg", "thumb": "web/Documentary/Butbut tribe - 2024/_DSC0243@thumb.jpg", "w": 2200, "h": 1237},
+        {"full": "web/Documentary/Butbut tribe - 2024/_DSC0248.jpg", "thumb": "web/Documentary/Butbut tribe - 2024/_DSC0248@thumb.jpg", "w": 1759, "h": 2200},
+        {"full": "web/Documentary/Butbut tribe - 2024/_DSC0255.jpg", "thumb": "web/Documentary/Butbut tribe - 2024/_DSC0255@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Documentary/Butbut tribe - 2024/_DSC0263.jpg", "thumb": "web/Documentary/Butbut tribe - 2024/_DSC0263@thumb.jpg", "w": 1466, "h": 2200},
+      ],
+      "Documentary/Daily Commute (Thesis) - 2025": [
+        {"full": "web/Documentary/Daily Commute (Thesis) - 2025/Gulaga_Image001.jpg", "thumb": "web/Documentary/Daily Commute (Thesis) - 2025/Gulaga_Image001@thumb.jpg", "w": 2200, "h": 1728},
+        {"full": "web/Documentary/Daily Commute (Thesis) - 2025/Gulaga_Image002.jpg", "thumb": "web/Documentary/Daily Commute (Thesis) - 2025/Gulaga_Image002@thumb.jpg", "w": 1728, "h": 2200},
+        {"full": "web/Documentary/Daily Commute (Thesis) - 2025/Gulaga_Image003.jpg", "thumb": "web/Documentary/Daily Commute (Thesis) - 2025/Gulaga_Image003@thumb.jpg", "w": 2200, "h": 1057},
+        {"full": "web/Documentary/Daily Commute (Thesis) - 2025/Gulaga_Image004.jpg", "thumb": "web/Documentary/Daily Commute (Thesis) - 2025/Gulaga_Image004@thumb.jpg", "w": 2200, "h": 1466},
+        {"full": "web/Documentary/Daily Commute (Thesis) - 2025/Gulaga_Image005.jpg", "thumb": "web/Documentary/Daily Commute (Thesis) - 2025/Gulaga_Image005@thumb.jpg", "w": 1728, "h": 2200},
+      ],
+      "Documentary/Everyday Life - 2024-2026": [
+        {"full": "web/Documentary/Everyday Life - 2024-2026/DSC_0228.jpg", "thumb": "web/Documentary/Everyday Life - 2024-2026/DSC_0228@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Documentary/Everyday Life - 2024-2026/DSC_0230.jpg", "thumb": "web/Documentary/Everyday Life - 2024-2026/DSC_0230@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Documentary/Everyday Life - 2024-2026/DSC_0275.jpg", "thumb": "web/Documentary/Everyday Life - 2024-2026/DSC_0275@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Documentary/Everyday Life - 2024-2026/DSC_0279.jpg", "thumb": "web/Documentary/Everyday Life - 2024-2026/DSC_0279@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Documentary/Everyday Life - 2024-2026/DSC_0570.jpg", "thumb": "web/Documentary/Everyday Life - 2024-2026/DSC_0570@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Documentary/Everyday Life - 2024-2026/DSC_0571.jpg", "thumb": "web/Documentary/Everyday Life - 2024-2026/DSC_0571@thumb.jpg", "w": 2200, "h": 1466},
+        {"full": "web/Documentary/Everyday Life - 2024-2026/DSC_0579.jpg", "thumb": "web/Documentary/Everyday Life - 2024-2026/DSC_0579@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Documentary/Everyday Life - 2024-2026/DSC_0875-2.jpg", "thumb": "web/Documentary/Everyday Life - 2024-2026/DSC_0875-2@thumb.jpg", "w": 1466, "h": 2200},
+      ],
+      "Documentary/Flowers - 2024": [
+        {"full": "web/Documentary/Flowers - 2024/DSC_2171-2.jpg", "thumb": "web/Documentary/Flowers - 2024/DSC_2171-2@thumb.jpg", "w": 1237, "h": 2200},
+        {"full": "web/Documentary/Flowers - 2024/DSC_2171.jpg", "thumb": "web/Documentary/Flowers - 2024/DSC_2171@thumb.jpg", "w": 2200, "h": 1466},
+        {"full": "web/Documentary/Flowers - 2024/DSC_2172.jpg", "thumb": "web/Documentary/Flowers - 2024/DSC_2172@thumb.jpg", "w": 2200, "h": 1466},
+        {"full": "web/Documentary/Flowers - 2024/DSC_2174.jpg", "thumb": "web/Documentary/Flowers - 2024/DSC_2174@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Documentary/Flowers - 2024/_DSC0623.jpg", "thumb": "web/Documentary/Flowers - 2024/_DSC0623@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Documentary/Flowers - 2024/_DSC0624.jpg", "thumb": "web/Documentary/Flowers - 2024/_DSC0624@thumb.jpg", "w": 1759, "h": 2200},
+      ],
+      "Documentary/Jenelle & Paris - 2024": [
+        {"full": "web/Documentary/Jenelle & Paris - 2024/DSC_1075.jpg", "thumb": "web/Documentary/Jenelle & Paris - 2024/DSC_1075@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Documentary/Jenelle & Paris - 2024/_DSC0170 2.jpg", "thumb": "web/Documentary/Jenelle & Paris - 2024/_DSC0170 2@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Documentary/Jenelle & Paris - 2024/_DSC0170.jpg", "thumb": "web/Documentary/Jenelle & Paris - 2024/_DSC0170@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Documentary/Jenelle & Paris - 2024/_DSC0171 2.jpg", "thumb": "web/Documentary/Jenelle & Paris - 2024/_DSC0171 2@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Documentary/Jenelle & Paris - 2024/_DSC0171.jpg", "thumb": "web/Documentary/Jenelle & Paris - 2024/_DSC0171@thumb.jpg", "w": 1466, "h": 2200},
+      ],
+      "Documentary/M&S Wedding - 2024": [
+        {"full": "web/Documentary/M&S Wedding - 2024/_DSC0172.jpg", "thumb": "web/Documentary/M&S Wedding - 2024/_DSC0172@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Documentary/M&S Wedding - 2024/_DSC0173.jpg", "thumb": "web/Documentary/M&S Wedding - 2024/_DSC0173@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Documentary/M&S Wedding - 2024/_DSC0174.jpg", "thumb": "web/Documentary/M&S Wedding - 2024/_DSC0174@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Documentary/M&S Wedding - 2024/_DSC0226.jpg", "thumb": "web/Documentary/M&S Wedding - 2024/_DSC0226@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Documentary/M&S Wedding - 2024/_DSC0293.jpg", "thumb": "web/Documentary/M&S Wedding - 2024/_DSC0293@thumb.jpg", "w": 2200, "h": 1466},
+        {"full": "web/Documentary/M&S Wedding - 2024/_DSC0297.jpg", "thumb": "web/Documentary/M&S Wedding - 2024/_DSC0297@thumb.jpg", "w": 2200, "h": 1466},
+        {"full": "web/Documentary/M&S Wedding - 2024/_DSC0303.jpg", "thumb": "web/Documentary/M&S Wedding - 2024/_DSC0303@thumb.jpg", "w": 2200, "h": 1466},
+        {"full": "web/Documentary/M&S Wedding - 2024/_DSC0307.jpg", "thumb": "web/Documentary/M&S Wedding - 2024/_DSC0307@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Documentary/M&S Wedding - 2024/_DSC0321.jpg", "thumb": "web/Documentary/M&S Wedding - 2024/_DSC0321@thumb.jpg", "w": 2200, "h": 1466},
+        {"full": "web/Documentary/M&S Wedding - 2024/_DSC0322.jpg", "thumb": "web/Documentary/M&S Wedding - 2024/_DSC0322@thumb.jpg", "w": 2200, "h": 1466},
+        {"full": "web/Documentary/M&S Wedding - 2024/_DSC0345.jpg", "thumb": "web/Documentary/M&S Wedding - 2024/_DSC0345@thumb.jpg", "w": 1466, "h": 2200},
+      ],
+      "Documentary/Transportation - 2026": [
+        {"full": "web/Documentary/Transportation - 2026/DSC_0218.jpg", "thumb": "web/Documentary/Transportation - 2026/DSC_0218@thumb.jpg", "w": 1350, "h": 900},
+        {"full": "web/Documentary/Transportation - 2026/DSC_0308.jpg", "thumb": "web/Documentary/Transportation - 2026/DSC_0308@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Documentary/Transportation - 2026/DSC_0392.jpg", "thumb": "web/Documentary/Transportation - 2026/DSC_0392@thumb.jpg", "w": 1466, "h": 2200},
+      ],
+      "Portraits/Fashion Photog Class - 2025": [
+        {"full": "web/Portraits/Fashion Photog Class - 2025/TEST20039.jpg", "thumb": "web/Portraits/Fashion Photog Class - 2025/TEST20039@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Portraits/Fashion Photog Class - 2025/TEST20096.jpg", "thumb": "web/Portraits/Fashion Photog Class - 2025/TEST20096@thumb.jpg", "w": 1466, "h": 2200},
+      ],
+      "Portraits/Isabela - 2025": [
+        {"full": "web/Portraits/Isabela - 2025/prutas0028.jpg", "thumb": "web/Portraits/Isabela - 2025/prutas0028@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Portraits/Isabela - 2025/prutas0031.jpg", "thumb": "web/Portraits/Isabela - 2025/prutas0031@thumb.jpg", "w": 1466, "h": 2200},
+      ],
+      "Portraits/K&S Prenup - 2024": [
+        {"full": "web/Portraits/K&S Prenup - 2024/BGV_6827.jpg", "thumb": "web/Portraits/K&S Prenup - 2024/BGV_6827@thumb.jpg", "w": 2200, "h": 1468},
+        {"full": "web/Portraits/K&S Prenup - 2024/BGV_6843.jpg", "thumb": "web/Portraits/K&S Prenup - 2024/BGV_6843@thumb.jpg", "w": 1759, "h": 2200},
+        {"full": "web/Portraits/K&S Prenup - 2024/BGV_6872.jpg", "thumb": "web/Portraits/K&S Prenup - 2024/BGV_6872@thumb.jpg", "w": 2200, "h": 1468},
+        {"full": "web/Portraits/K&S Prenup - 2024/BGV_6911.jpg", "thumb": "web/Portraits/K&S Prenup - 2024/BGV_6911@thumb.jpg", "w": 2200, "h": 1237},
+        {"full": "web/Portraits/K&S Prenup - 2024/BGV_6929.jpg", "thumb": "web/Portraits/K&S Prenup - 2024/BGV_6929@thumb.jpg", "w": 1468, "h": 2200},
+        {"full": "web/Portraits/K&S Prenup - 2024/EUR_8702.jpg", "thumb": "web/Portraits/K&S Prenup - 2024/EUR_8702@thumb.jpg", "w": 2200, "h": 1468},
+      ],
+      "Portraits/Kyla Crochet - 2025": [
+        {"full": "web/Portraits/Kyla Crochet - 2025/DSC09613.jpg", "thumb": "web/Portraits/Kyla Crochet - 2025/DSC09613@thumb.jpg", "w": 2200, "h": 1760},
+        {"full": "web/Portraits/Kyla Crochet - 2025/DSC09644.jpg", "thumb": "web/Portraits/Kyla Crochet - 2025/DSC09644@thumb.jpg", "w": 1760, "h": 2200},
+        {"full": "web/Portraits/Kyla Crochet - 2025/DSC09647.jpg", "thumb": "web/Portraits/Kyla Crochet - 2025/DSC09647@thumb.jpg", "w": 1759, "h": 2200},
+        {"full": "web/Portraits/Kyla Crochet - 2025/DSC09650.jpg", "thumb": "web/Portraits/Kyla Crochet - 2025/DSC09650@thumb.jpg", "w": 1760, "h": 2200},
+        {"full": "web/Portraits/Kyla Crochet - 2025/DSC09651.jpg", "thumb": "web/Portraits/Kyla Crochet - 2025/DSC09651@thumb.jpg", "w": 1760, "h": 2200},
+        {"full": "web/Portraits/Kyla Crochet - 2025/DSC09655.jpg", "thumb": "web/Portraits/Kyla Crochet - 2025/DSC09655@thumb.jpg", "w": 2200, "h": 1466},
+        {"full": "web/Portraits/Kyla Crochet - 2025/DSC09661.jpg", "thumb": "web/Portraits/Kyla Crochet - 2025/DSC09661@thumb.jpg", "w": 1760, "h": 2200},
+      ],
+      "Portraits/Mikey - 2024": [
+        {"full": "web/Portraits/Mikey - 2024/DSC01738.jpg", "thumb": "web/Portraits/Mikey - 2024/DSC01738@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Portraits/Mikey - 2024/DSC01755.jpg", "thumb": "web/Portraits/Mikey - 2024/DSC01755@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Portraits/Mikey - 2024/DSC01760.jpg", "thumb": "web/Portraits/Mikey - 2024/DSC01760@thumb.jpg", "w": 1649, "h": 2200},
+        {"full": "web/Portraits/Mikey - 2024/DSC01767-2.jpg", "thumb": "web/Portraits/Mikey - 2024/DSC01767-2@thumb.jpg", "w": 1760, "h": 2200},
+        {"full": "web/Portraits/Mikey - 2024/DSC01767.jpg", "thumb": "web/Portraits/Mikey - 2024/DSC01767@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Portraits/Mikey - 2024/DSC01782.jpg", "thumb": "web/Portraits/Mikey - 2024/DSC01782@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Portraits/Mikey - 2024/DSC01792.jpg", "thumb": "web/Portraits/Mikey - 2024/DSC01792@thumb.jpg", "w": 2200, "h": 1466},
+        {"full": "web/Portraits/Mikey - 2024/DSC01793.jpg", "thumb": "web/Portraits/Mikey - 2024/DSC01793@thumb.jpg", "w": 2200, "h": 1466},
+      ],
+      "Portraits/Mikha - 2024": [
+        {"full": "web/Portraits/Mikha - 2024/EUM_1897.jpg", "thumb": "web/Portraits/Mikha - 2024/EUM_1897@thumb.jpg", "w": 1468, "h": 2200},
+        {"full": "web/Portraits/Mikha - 2024/EUM_1900.jpg", "thumb": "web/Portraits/Mikha - 2024/EUM_1900@thumb.jpg", "w": 1468, "h": 2200},
+        {"full": "web/Portraits/Mikha - 2024/EUM_1914.jpg", "thumb": "web/Portraits/Mikha - 2024/EUM_1914@thumb.jpg", "w": 2200, "h": 1468},
+        {"full": "web/Portraits/Mikha - 2024/EUM_1915-2.jpg", "thumb": "web/Portraits/Mikha - 2024/EUM_1915-2@thumb.jpg", "w": 2200, "h": 1468},
+        {"full": "web/Portraits/Mikha - 2024/EUM_1915.jpg", "thumb": "web/Portraits/Mikha - 2024/EUM_1915@thumb.jpg", "w": 1468, "h": 2200},
+        {"full": "web/Portraits/Mikha - 2024/EUM_1916.jpg", "thumb": "web/Portraits/Mikha - 2024/EUM_1916@thumb.jpg", "w": 1468, "h": 2200},
+        {"full": "web/Portraits/Mikha - 2024/EUM_1917.jpg", "thumb": "web/Portraits/Mikha - 2024/EUM_1917@thumb.jpg", "w": 1468, "h": 2200},
+        {"full": "web/Portraits/Mikha - 2024/EUM_1920.jpg", "thumb": "web/Portraits/Mikha - 2024/EUM_1920@thumb.jpg", "w": 1468, "h": 2200},
+        {"full": "web/Portraits/Mikha - 2024/EUM_1921.jpg", "thumb": "web/Portraits/Mikha - 2024/EUM_1921@thumb.jpg", "w": 2200, "h": 1468},
+        {"full": "web/Portraits/Mikha - 2024/EUM_1922.jpg", "thumb": "web/Portraits/Mikha - 2024/EUM_1922@thumb.jpg", "w": 1468, "h": 2200},
+        {"full": "web/Portraits/Mikha - 2024/EUM_1923.jpg", "thumb": "web/Portraits/Mikha - 2024/EUM_1923@thumb.jpg", "w": 1468, "h": 2200},
+        {"full": "web/Portraits/Mikha - 2024/EUM_1924.jpg", "thumb": "web/Portraits/Mikha - 2024/EUM_1924@thumb.jpg", "w": 1468, "h": 2200},
+        {"full": "web/Portraits/Mikha - 2024/EUM_1925.jpg", "thumb": "web/Portraits/Mikha - 2024/EUM_1925@thumb.jpg", "w": 1468, "h": 2200},
+        {"full": "web/Portraits/Mikha - 2024/EUM_1926.jpg", "thumb": "web/Portraits/Mikha - 2024/EUM_1926@thumb.jpg", "w": 1468, "h": 2200},
+        {"full": "web/Portraits/Mikha - 2024/EUM_1927.jpg", "thumb": "web/Portraits/Mikha - 2024/EUM_1927@thumb.jpg", "w": 1468, "h": 2200},
+        {"full": "web/Portraits/Mikha - 2024/EUM_1929-2.jpg", "thumb": "web/Portraits/Mikha - 2024/EUM_1929-2@thumb.jpg", "w": 1468, "h": 2200},
+        {"full": "web/Portraits/Mikha - 2024/EUM_1929.jpg", "thumb": "web/Portraits/Mikha - 2024/EUM_1929@thumb.jpg", "w": 1468, "h": 2200},
+        {"full": "web/Portraits/Mikha - 2024/EUM_1935.jpg", "thumb": "web/Portraits/Mikha - 2024/EUM_1935@thumb.jpg", "w": 2200, "h": 1468},
+        {"full": "web/Portraits/Mikha - 2024/EUM_1938.jpg", "thumb": "web/Portraits/Mikha - 2024/EUM_1938@thumb.jpg", "w": 1468, "h": 2200},
+        {"full": "web/Portraits/Mikha - 2024/EUM_1941.jpg", "thumb": "web/Portraits/Mikha - 2024/EUM_1941@thumb.jpg", "w": 1468, "h": 2200},
+        {"full": "web/Portraits/Mikha - 2024/EUM_1942.jpg", "thumb": "web/Portraits/Mikha - 2024/EUM_1942@thumb.jpg", "w": 1699, "h": 2200},
+        {"full": "web/Portraits/Mikha - 2024/EUM_1943.jpg", "thumb": "web/Portraits/Mikha - 2024/EUM_1943@thumb.jpg", "w": 1468, "h": 2200},
+        {"full": "web/Portraits/Mikha - 2024/EUM_1945.jpg", "thumb": "web/Portraits/Mikha - 2024/EUM_1945@thumb.jpg", "w": 1468, "h": 2200},
+        {"full": "web/Portraits/Mikha - 2024/EUM_1946-2.jpg", "thumb": "web/Portraits/Mikha - 2024/EUM_1946-2@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Portraits/Mikha - 2024/EUM_1946.jpg", "thumb": "web/Portraits/Mikha - 2024/EUM_1946@thumb.jpg", "w": 1468, "h": 2200},
+        {"full": "web/Portraits/Mikha - 2024/EUM_1948.jpg", "thumb": "web/Portraits/Mikha - 2024/EUM_1948@thumb.jpg", "w": 1468, "h": 2200},
+        {"full": "web/Portraits/Mikha - 2024/EUM_1949.jpg", "thumb": "web/Portraits/Mikha - 2024/EUM_1949@thumb.jpg", "w": 1468, "h": 2200},
+      ],
+      "Portraits/Paris - 2023": [
+        {"full": "web/Portraits/Paris - 2023/DSC_0521.jpg", "thumb": "web/Portraits/Paris - 2023/DSC_0521@thumb.jpg", "w": 2200, "h": 1466},
+        {"full": "web/Portraits/Paris - 2023/DSC_0523.jpg", "thumb": "web/Portraits/Paris - 2023/DSC_0523@thumb.jpg", "w": 2200, "h": 1760},
+        {"full": "web/Portraits/Paris - 2023/DSC_2004.jpg", "thumb": "web/Portraits/Paris - 2023/DSC_2004@thumb.jpg", "w": 2200, "h": 1466},
+        {"full": "web/Portraits/Paris - 2023/DSC_2005.jpg", "thumb": "web/Portraits/Paris - 2023/DSC_2005@thumb.jpg", "w": 1699, "h": 2200},
+        {"full": "web/Portraits/Paris - 2023/DSC_2006.jpg", "thumb": "web/Portraits/Paris - 2023/DSC_2006@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Portraits/Paris - 2023/DSC_2020.jpg", "thumb": "web/Portraits/Paris - 2023/DSC_2020@thumb.jpg", "w": 1650, "h": 2200},
+        {"full": "web/Portraits/Paris - 2023/_DSC0455.jpg", "thumb": "web/Portraits/Paris - 2023/_DSC0455@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Portraits/Paris - 2023/_DSC0456-2.jpg", "thumb": "web/Portraits/Paris - 2023/_DSC0456-2@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Portraits/Paris - 2023/_DSC0456.jpg", "thumb": "web/Portraits/Paris - 2023/_DSC0456@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Portraits/Paris - 2023/_DSC0457.jpg", "thumb": "web/Portraits/Paris - 2023/_DSC0457@thumb.jpg", "w": 1466, "h": 2200},
+      ],
+      "Portraits/Tycoons - 2024": [
+        {"full": "web/Portraits/Tycoons - 2024/_DSC0022.jpg", "thumb": "web/Portraits/Tycoons - 2024/_DSC0022@thumb.jpg", "w": 1571, "h": 2200},
+        {"full": "web/Portraits/Tycoons - 2024/_DSC0083.jpg", "thumb": "web/Portraits/Tycoons - 2024/_DSC0083@thumb.jpg", "w": 1700, "h": 2200},
+        {"full": "web/Portraits/Tycoons - 2024/_DSC0089.jpg", "thumb": "web/Portraits/Tycoons - 2024/_DSC0089@thumb.jpg", "w": 1466, "h": 2200},
+      ],
+      "Portraits/Yzoe - 2024": [
+        {"full": "web/Portraits/Yzoe - 2024/DSC01840.jpg", "thumb": "web/Portraits/Yzoe - 2024/DSC01840@thumb.jpg", "w": 1760, "h": 2200},
+        {"full": "web/Portraits/Yzoe - 2024/DSC01842.jpg", "thumb": "web/Portraits/Yzoe - 2024/DSC01842@thumb.jpg", "w": 1759, "h": 2200},
+      ],
+      "Street/Intramuros Streets 2024": [
+        {"full": "web/Street/Intramuros Streets 2024/_DSC0001.jpg", "thumb": "web/Street/Intramuros Streets 2024/_DSC0001@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Street/Intramuros Streets 2024/_DSC0009.jpg", "thumb": "web/Street/Intramuros Streets 2024/_DSC0009@thumb.jpg", "w": 1466, "h": 2200},
+      ],
+      "Street/Manila Streets 2024-2026": [
+        {"full": "web/Street/Manila Streets 2024-2026/_DSC0002.jpg", "thumb": "web/Street/Manila Streets 2024-2026/_DSC0002@thumb.jpg", "w": 2048, "h": 1365},
+        {"full": "web/Street/Manila Streets 2024-2026/_DSC0003.jpg", "thumb": "web/Street/Manila Streets 2024-2026/_DSC0003@thumb.jpg", "w": 1365, "h": 2048},
+        {"full": "web/Street/Manila Streets 2024-2026/_DSC0451.jpg", "thumb": "web/Street/Manila Streets 2024-2026/_DSC0451@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Street/Manila Streets 2024-2026/_DSC0457 2.jpg", "thumb": "web/Street/Manila Streets 2024-2026/_DSC0457 2@thumb.jpg", "w": 2200, "h": 1466},
+        {"full": "web/Street/Manila Streets 2024-2026/_DSC0479.jpg", "thumb": "web/Street/Manila Streets 2024-2026/_DSC0479@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Street/Manila Streets 2024-2026/_DSC0480.jpg", "thumb": "web/Street/Manila Streets 2024-2026/_DSC0480@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Street/Manila Streets 2024-2026/_DSC0481.jpg", "thumb": "web/Street/Manila Streets 2024-2026/_DSC0481@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Street/Manila Streets 2024-2026/_DSC0489.jpg", "thumb": "web/Street/Manila Streets 2024-2026/_DSC0489@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Street/Manila Streets 2024-2026/_DSC0491.jpg", "thumb": "web/Street/Manila Streets 2024-2026/_DSC0491@thumb.jpg", "w": 2200, "h": 1466},
+        {"full": "web/Street/Manila Streets 2024-2026/_DSC0493.jpg", "thumb": "web/Street/Manila Streets 2024-2026/_DSC0493@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Street/Manila Streets 2024-2026/_DSC0494 2.jpg", "thumb": "web/Street/Manila Streets 2024-2026/_DSC0494 2@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Street/Manila Streets 2024-2026/_DSC0504.jpg", "thumb": "web/Street/Manila Streets 2024-2026/_DSC0504@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Street/Manila Streets 2024-2026/_DSC0506.jpg", "thumb": "web/Street/Manila Streets 2024-2026/_DSC0506@thumb.jpg", "w": 1466, "h": 2200},
+      ],
+      "Street/Museum - 2024": [
+        {"full": "web/Street/Museum - 2024/_DSC0424.jpg", "thumb": "web/Street/Museum - 2024/_DSC0424@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Street/Museum - 2024/_DSC0428.jpg", "thumb": "web/Street/Museum - 2024/_DSC0428@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Street/Museum - 2024/_DSC0441.jpg", "thumb": "web/Street/Museum - 2024/_DSC0441@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Street/Museum - 2024/_DSC0444.jpg", "thumb": "web/Street/Museum - 2024/_DSC0444@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Street/Museum - 2024/_DSC0446.jpg", "thumb": "web/Street/Museum - 2024/_DSC0446@thumb.jpg", "w": 1466, "h": 2200},
+        {"full": "web/Street/Museum - 2024/_DSC0449.jpg", "thumb": "web/Street/Museum - 2024/_DSC0449@thumb.jpg", "w": 1466, "h": 2200},
+      ],
+    };
+
+    /* Curated home-page selections. Each entry picks a project and the specific
+       photo (by filename without extension) to use as that tile's cover. */
+    window.HOME_CAROUSEL = [
+      { projectId: "manila-streets",  photo: "_DSC0491" },
+      { projectId: "kyla-crochet",    photo: "DSC09655" },
+      { projectId: "daily-commute",   photo: "Gulaga_Image001" },
+      { projectId: "mikha",           photo: "EUM_1921" },
+    ];
+    window.HOME_BEST = [
+      { projectId: "manila-streets",  photo: "_DSC0493" },
+      { projectId: "kyla-crochet",    photo: "DSC09650" },
+      { projectId: "flowers",         photo: "_DSC0623" },
+      { projectId: "isabela",         photo: "prutas0028" },
+      { projectId: "transportation",  photo: "DSC_0392" },
+      { projectId: "mikha",           photo: "EUM_1929-2" },
+      { projectId: "ms-wedding",      photo: "_DSC0322" },
+      { projectId: "mikey",           photo: "DSC01767" },
+      { projectId: "paris",           photo: "DSC_2006" },
+    ];
+
+    /* Project metadata. Shots & cover are derived from PHOTOS via folder. */
+    window.PROJECTS = [
+      { id: "transportation", title: "Transportation", year: 2026, location: "", tag: "Documentary",
+        folder: "Documentary/Transportation - 2026", coverTone: "slate", desc: "" },
+      { id: "everyday-life", title: "Everyday Life", year: "2024–2026", location: "", tag: "Documentary",
+        folder: "Documentary/Everyday Life - 2024-2026", coverTone: "warm", desc: "" },
+      { id: "manila-streets", title: "Manila Streets", year: "2024–2026", location: "", tag: "Street",
+        folder: "Street/Manila Streets 2024-2026", coverTone: "ink", desc: "" },
+      { id: "br-wedding", title: "B&R Wedding", year: 2025, location: "", tag: "Documentary",
+        folder: "Documentary/B&R Wedding - 2025", coverTone: "bone", desc: "" },
+      { id: "daily-commute", title: "Daily Commute (Thesis)", year: 2025, location: "", tag: "Documentary",
+        folder: "Documentary/Daily Commute (Thesis) - 2025", coverTone: "slate", desc: "" },
+      { id: "isabela", title: "Isabela", year: 2025, location: "", tag: "Portraits",
+        folder: "Portraits/Isabela - 2025", coverTone: "warm", desc: "" },
+      { id: "kyla-crochet", title: "Kyla Crochet", year: 2025, location: "", tag: "Portraits",
+        folder: "Portraits/Kyla Crochet - 2025", coverTone: "rust", desc: "" },
+      { id: "fashion-photog-class", title: "Fashion Photog Class", year: 2025, location: "", tag: "Portraits",
+        folder: "Portraits/Fashion Photog Class - 2025", coverTone: "cool", desc: "" },
+      { id: "ms-wedding", title: "M&S Wedding", year: 2024, location: "", tag: "Documentary",
+        folder: "Documentary/M&S Wedding - 2024", coverTone: "bone", desc: "" },
+      { id: "flowers", title: "Flowers", year: 2024, location: "", tag: "Documentary",
+        folder: "Documentary/Flowers - 2024", coverTone: "green", desc: "" },
+      { id: "mikha", title: "Mikha", year: 2024, location: "", tag: "Portraits",
+        folder: "Portraits/Mikha - 2024", coverTone: "cool", desc: "" },
+      { id: "yzoe", title: "Yzoe", year: 2024, location: "", tag: "Portraits",
+        folder: "Portraits/Yzoe - 2024", coverTone: "dust", desc: "" },
+      { id: "ks-prenup", title: "K&S Prenup", year: 2024, location: "", tag: "Portraits",
+        folder: "Portraits/K&S Prenup - 2024", coverTone: "warm", desc: "" },
+      { id: "mikey", title: "Mikey", year: 2024, location: "", tag: "Portraits",
+        folder: "Portraits/Mikey - 2024", coverTone: "ink", desc: "" },
+      { id: "butbut-tribe", title: "Butbut tribe", year: 2024, location: "", tag: "Documentary",
+        folder: "Documentary/Butbut tribe - 2024", coverTone: "rust", desc: "" },
+      { id: "jenelle-paris", title: "Jenelle & Paris", year: 2024, location: "", tag: "Documentary",
+        folder: "Documentary/Jenelle & Paris - 2024", coverTone: "bone", desc: "" },
+      { id: "tycoons", title: "Tycoons", year: 2024, location: "", tag: "Portraits",
+        folder: "Portraits/Tycoons - 2024", coverTone: "ink", desc: "" },
+      { id: "intramuros-streets", title: "Intramuros Streets", year: 2024, location: "", tag: "Street",
+        folder: "Street/Intramuros Streets 2024", coverTone: "rust", desc: "" },
+      { id: "museum", title: "Museum", year: 2024, location: "", tag: "Street",
+        folder: "Street/Museum - 2024", coverTone: "ink", desc: "" },
+      { id: "paris", title: "Paris", year: 2023, location: "", tag: "Portraits",
+        folder: "Portraits/Paris - 2023", coverTone: "bone", desc: "" },
+    ];
+  </script>
+
+  <script type="text/babel" data-presets="env,react">
+    const { useState, useEffect, useMemo, useRef } = React;
+    const PHOTOGRAPHER = "Kenji Gulaga";
+
+    /* ---------- Placeholder ---------- */
+    function Placeholder({ tone = "ink", caption, angle = 135, showTag = true, src, alt }) {
+      const [loaded, setLoaded] = useState(false);
+      const encoded = src ? src.split("/").map(encodeURIComponent).join("/") : null;
+      return (
+        <div className={"ph " + (src ? "has-img" : "")} data-tone={tone} style={{ "--ph-angle": `${angle}deg` }}>
+          {encoded && (
+            <img
+              className={"ph__img " + (loaded ? "is-loaded" : "")}
+              src={encoded}
+              alt={alt || ""}
+              loading="lazy"
+              onLoad={() => setLoaded(true)}
+            />
+          )}
+          {showTag && caption ? <div className="ph__tag">{caption}</div> : null}
+        </div>
+      );
+    }
+
+    /* ---------- Photo helpers ---------- */
+    function getPhotos(project) {
+      if (!project || !project.folder) return [];
+      return (window.PHOTOS && window.PHOTOS[project.folder]) || [];
+    }
+    function getCover(project) {
+      const photos = getPhotos(project);
+      return photos[0] || null;
+    }
+    function getShots(project) {
+      return getPhotos(project).map((p, i) => ({
+        full: p.full,
+        thumb: p.thumb,
+        w: p.w || 0,
+        h: p.h || 0,
+        caption: `№ ${String(i + 1).padStart(2, "0")}`,
+        tone: project.coverTone || "ink",
+      }));
+    }
+    /* Group consecutive portrait shots into pairs so two appear in one row. */
+    function groupShots(shots) {
+      const groups = [];
+      let i = 0;
+      while (i < shots.length) {
+        const a = shots[i];
+        const b = shots[i + 1];
+        const aPortrait = a && a.h > a.w;
+        const bPortrait = b && b.h > b.w;
+        if (aPortrait && bPortrait) {
+          groups.push({ kind: "pair", indexes: [i, i + 1] });
+          i += 2;
+        } else {
+          groups.push({ kind: "single", index: i });
+          i += 1;
+        }
+      }
+      return groups;
+    }
+    function findPhoto(project, basename) {
+      if (!project) return null;
+      const photos = getPhotos(project);
+      const hit = photos.find((p) => {
+        const stem = p.full.split("/").pop().replace(/\.[^.]+$/, "");
+        return stem === basename;
+      });
+      return hit || photos[0] || null;
+    }
+    function resolveSelection(list) {
+      return (list || [])
+        .map((it) => {
+          const p = window.PROJECTS.find((x) => x.id === it.projectId);
+          if (!p) return null;
+          return Object.assign({}, p, { _coverPhoto: findPhoto(p, it.photo) });
+        })
+        .filter(Boolean);
+    }
+
+    /* ---------- Topbar ---------- */
+    function Topbar({ page, onNav }) {
+      const [stuck, setStuck] = useState(false);
+      useEffect(() => {
+        const onScroll = () => setStuck(window.scrollY > 4);
+        window.addEventListener("scroll", onScroll);
+        return () => window.removeEventListener("scroll", onScroll);
+      }, []);
+      const items = [
+        { id: "home", label: "Index" },
+        { id: "work", label: "Work" },
+        { id: "contact", label: "Contact" },
+      ];
+      return (
+        <header className={"topbar " + (stuck ? "is-stuck" : "")}>
+          <div className="topbar__brand">
+            <span className="mark" onClick={() => onNav("home")} style={{ cursor: "pointer" }}>
+              {PHOTOGRAPHER}
+            </span>
+            <span style={{ color: "var(--mid)" }}>— Photographer</span>
+          </div>
+          <div className="topbar__center">Archive · 2023 — 2026</div>
+          <nav className="topbar__nav">
+            {items.map((it) => (
+              <button key={it.id}
+                      className={page.startsWith(it.id) || (it.id === "work" && page === "project") ? "is-active" : ""}
+                      onClick={() => onNav(it.id)}>
+                {it.label}
+              </button>
+            ))}
+          </nav>
+        </header>
+      );
+    }
+
+    /* ---------- Footer ---------- */
+    function Footer() {
+      return (
+        <footer className="footer">
+          <div className="footer__col">
+            <strong>{PHOTOGRAPHER}</strong>
+            <span>Independent Photographer</span>
+            <span>Based — Las Pinas, Manila, PH</span>
+          </div>
+          <div className="footer__col">
+            <strong>Elsewhere</strong>
+            <a href="https://www.instagram.com/knjgulaga/" target="_blank" rel="noopener noreferrer">Instagram ↗</a>
+            <a href="mailto:kgulaga@cloudsherpas.co">Email ↗</a>
+          </div>
+          <div className="footer__col" style={{ textAlign: "right" }}>
+            <strong>© 2026 — All rights reserved</strong>
+            <span>Site v.04 · Last updated 04/26</span>
+            <span>Designed in HTML</span>
+          </div>
+        </footer>
+      );
+    }
+
+    /* ---------- Home ---------- */
+    function HomePage({ onOpenProject }) {
+      const featured = useMemo(() => resolveSelection(window.HOME_CAROUSEL), []);
+      const best = useMemo(() => resolveSelection(window.HOME_BEST), []);
+      const [active, setActive] = useState(0);
+      useEffect(() => {
+        if (featured.length < 2) return;
+        const t = setInterval(() => setActive((a) => (a + 1) % featured.length), 6000);
+        return () => clearInterval(t);
+      }, [featured.length]);
+      const current = featured[active] || window.PROJECTS[0];
+      const currentCover = (current && current._coverPhoto) || getCover(current);
+      const goPrev = (e) => { e && e.stopPropagation(); setActive((a) => (a - 1 + featured.length) % featured.length); };
+      const goNext = (e) => { e && e.stopPropagation(); setActive((a) => (a + 1) % featured.length); };
+      return (
+        <div className="page home">
+          <section className="home__hero">
+            <div className="home__plate" onClick={() => onOpenProject(current.id)}>
+              <Placeholder
+                tone={current.coverTone}
+                caption={`${current.title.toUpperCase()} / DIGITAL / ${current.year}`}
+                src={currentCover && currentCover.full}
+                alt={current.title}
+              />
+              {featured.length > 1 && (
+                <>
+                  <button className="home__arrow home__arrow--prev"
+                          onClick={goPrev} aria-label="Previous slide">←</button>
+                  <button className="home__arrow home__arrow--next"
+                          onClick={goNext} aria-label="Next slide">→</button>
+                </>
+              )}
+            </div>
+            <div className="home__caption">
+              <span className="idx">
+                {String(active + 1).padStart(2, "0")} / {String(featured.length).padStart(2, "0")}
+              </span>
+              <span className="title">{current.title}</span>
+              <span className="meta">{current.location || current.tag}</span>
+              <span className="meta">{current.year}</span>
+            </div>
+            <div className="home__pager">
+              {featured.map((_, i) => (
+                <button key={i} className={i === active ? "is-active" : ""}
+                        onClick={() => setActive(i)}
+                        aria-label={`Go to slide ${i + 1}`} />
+              ))}
+            </div>
+          </section>
+
+          <section className="home__strip">
+            <h1 className="head">
+              A working archive of <em>quiet</em> photographs, made between assignments.
+            </h1>
+            <p className="lede">
+              {PHOTOGRAPHER} is a documentary, street, and portraits photographer
+              who loves to capture the mundanes and everyday moments.
+              Available for commissions.
+            </p>
+            <div className="stats">
+              <div><span>Projects</span><strong>{String(window.PROJECTS.length).padStart(2, "0")}</strong></div>
+              <div><span>Categories</span><strong>03</strong></div>
+              <div><span>Format</span><strong>Digital</strong></div>
+              <div><span>Since</span><strong>2023</strong></div>
+            </div>
+          </section>
+
+          <section className="home__recent">
+            <h2>
+              <span>Best work — selected</span>
+              <span className="count">{String(window.PROJECTS.length).padStart(2, "0")} projects</span>
+            </h2>
+            <div className="home__grid">
+              {best.map((p, i) => {
+                const cover = p._coverPhoto || getCover(p);
+                return (
+                  <div className="tile" key={`${p.id}-${i}`} onClick={() => onOpenProject(p.id)}>
+                    <Placeholder
+                      tone={p.coverTone}
+                      caption={`${p.tag.toUpperCase()} / ${p.year}`}
+                      src={cover && cover.thumb}
+                      alt={p.title}
+                    />
+                    <div className="meta">
+                      <span className="t">{p.title}</span>
+                      <span className="y">{p.year} · {p.tag}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        </div>
+      );
+    }
+
+    /* ---------- Work ---------- */
+    function WorkPage({ onOpenProject }) {
+      const [filter, setFilter] = useState("All");
+      const tags = useMemo(() => {
+        const set = new Set(window.PROJECTS.map((p) => p.tag));
+        return ["All", ...Array.from(set)];
+      }, []);
+      const list = useMemo(
+        () => (filter === "All" ? window.PROJECTS : window.PROJECTS.filter((p) => p.tag === filter)),
+        [filter]
+      );
+      return (
+        <div className="page work">
+          <div className="work__head">
+            <h1>Selected Work</h1>
+            <span>{String(list.length).padStart(2, "0")} entries</span>
+            <span>Sorted — newest first</span>
+          </div>
+          <div className="work__filters">
+            {tags.map((t) => (
+              <button key={t} className={t === filter ? "is-on" : ""} onClick={() => setFilter(t)}>
+                {t}
+                <span style={{ marginLeft: 8, color: "var(--mid-2)" }}>
+                  ({t === "All" ? window.PROJECTS.length : window.PROJECTS.filter((p) => p.tag === t).length})
+                </span>
+              </button>
+            ))}
+          </div>
+          <div className="work__list">
+            {list.map((p, i) => (
+              <div key={p.id} className="work__row" onClick={() => onOpenProject(p.id)}>
+                <span className="num">№ {String(i + 1).padStart(2, "0")}</span>
+                <span className="ttl">{p.title}</span>
+                <span className="meta-tag">{p.tag}</span>
+                <span className="meta-yr">{p.year}</span>
+                <span className="arr">→</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    /* ---------- Project ---------- */
+    function ProjectPage({ projectId, onOpenProject, onBack }) {
+      const project = window.PROJECTS.find((p) => p.id === projectId) || window.PROJECTS[0];
+      const shots = useMemo(() => getShots(project), [project.id]);
+      const [lightbox, setLightbox] = useState(null);
+      const [scrollIdx, setScrollIdx] = useState(0);
+      const stackRef = useRef(null);
+
+      useEffect(() => {
+        const onScroll = () => {
+          const els = stackRef.current?.querySelectorAll(".proj__shot") || [];
+          const center = window.innerHeight / 2;
+          let closest = 0, min = Infinity;
+          els.forEach((el, i) => {
+            const r = el.getBoundingClientRect();
+            const c = r.top + r.height / 2;
+            const d = Math.abs(c - center);
+            if (d < min) { min = d; closest = i; }
+          });
+          setScrollIdx(closest);
+        };
+        onScroll();
+        window.addEventListener("scroll", onScroll, { passive: true });
+        return () => window.removeEventListener("scroll", onScroll);
+      }, [projectId]);
+
+      useEffect(() => {
+        if (lightbox === null) return;
+        const onKey = (e) => {
+          if (e.key === "Escape") setLightbox(null);
+          if (e.key === "ArrowRight") setLightbox((i) => Math.min(shots.length - 1, i + 1));
+          if (e.key === "ArrowLeft") setLightbox((i) => Math.max(0, i - 1));
+        };
+        window.addEventListener("keydown", onKey);
+        return () => window.removeEventListener("keydown", onKey);
+      }, [lightbox, shots]);
+
+      useEffect(() => { window.scrollTo(0, 0); }, [projectId]);
+
+      const idx = window.PROJECTS.findIndex((p) => p.id === project.id);
+      const next = window.PROJECTS[(idx + 1) % window.PROJECTS.length];
+
+      return (
+        <div className="page proj">
+          <button className="proj__back" onClick={onBack}>← Back to work</button>
+
+          <header className="proj__head">
+            <h1>{project.title}</h1>
+            <dl className="meta">
+              <div><dt>Year</dt><dd>{project.year}</dd></div>
+              <div><dt>Category</dt><dd>{project.tag}</dd></div>
+              <div><dt>Format</dt><dd>Digital</dd></div>
+              <div><dt>Frames</dt><dd>{String(shots.length).padStart(2, "0")}</dd></div>
+              {project.location && <div><dt>Location</dt><dd>{project.location}</dd></div>}
+              {project.desc && <p className="desc">{project.desc}</p>}
+            </dl>
+          </header>
+
+          {shots.length > 0 && (
+            <div className="proj__counter">
+              <strong>{String(scrollIdx + 1).padStart(2, "0")}</strong>
+              <span>/ {String(shots.length).padStart(2, "0")}</span>
+              <span style={{ marginLeft: 12, color: "var(--mid)" }}>{project.title}</span>
+            </div>
+          )}
+
+          <div className="proj__stack" ref={stackRef}>
+            {groupShots(shots).map((g, gi) => {
+              const renderShot = (idx) => {
+                const s = shots[idx];
+                const ratio = s.w && s.h ? `${s.w} / ${s.h}` : "3 / 2";
+                const portrait = s.h > s.w;
+                return (
+                  <figure
+                    key={idx}
+                    className={"proj__shot proj__shot--natural " + (portrait ? "is-portrait" : "is-landscape")}
+                    style={{ "--shot-ratio": ratio }}
+                    onClick={(e) => { e.stopPropagation(); setLightbox(idx); }}
+                  >
+                    <Placeholder
+                      tone={s.tone}
+                      caption={null}
+                      showTag={false}
+                      src={s.full}
+                      alt={`${project.title} — ${idx + 1}`}
+                    />
+                    <figcaption className="cap">
+                      <span>№ {String(idx + 1).padStart(2, "0")} — {project.title}</span>
+                      <span>{project.location ? `${project.location} · ` : ""}{project.tag} · {project.year}</span>
+                    </figcaption>
+                  </figure>
+                );
+              };
+              if (g.kind === "pair") {
+                return (
+                  <div className="proj__row proj__row--pair" key={`pair-${gi}`}>
+                    {g.indexes.map((idx) => renderShot(idx))}
+                  </div>
+                );
+              }
+              return renderShot(g.index);
+            })}
+          </div>
+
+          <div className="proj__next">
+            <span className="label">Next project →</span>
+            <h2 className="next-title" onClick={() => onOpenProject(next.id)}>{next.title}</h2>
+            <span className="label" style={{ textAlign: "right" }}>
+              {next.tag} · {next.year}{next.location ? ` · ${next.location}` : ""}
+            </span>
+          </div>
+
+          {lightbox !== null && shots[lightbox] && (
+            <div className="lightbox" onClick={() => setLightbox(null)}>
+              <button className="lightbox__close" onClick={() => setLightbox(null)}>Close ✕</button>
+              <div className="lightbox__plate" onClick={(e) => e.stopPropagation()}>
+                <Placeholder
+                  tone={shots[lightbox].tone}
+                  caption={null}
+                  showTag={false}
+                  src={shots[lightbox].full}
+                  alt={`${project.title} — ${lightbox + 1}`}
+                />
+              </div>
+              <div className="lightbox__nav" onClick={(e) => e.stopPropagation()}>
+                <button onClick={() => setLightbox((i) => Math.max(0, i - 1))}>← Prev</button>
+                <span style={{ color: "var(--paper)" }}>
+                  {String(lightbox + 1).padStart(2, "0")} / {String(shots.length).padStart(2, "0")}
+                </span>
+                <button onClick={() => setLightbox((i) => Math.min(shots.length - 1, i + 1))}>
+                  Next →
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    /* ---------- Contact ---------- */
+    function ContactPage() {
+      const [form, setForm] = useState({ name: "", email: "", subject: "Commission", message: "" });
+      const [errors, setErrors] = useState({});
+      const [sent, setSent] = useState(false);
+      const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+      const validate = () => {
+        const e = {};
+        if (!form.name.trim()) e.name = "Required";
+        if (!form.email.trim()) e.email = "Required";
+        else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email)) e.email = "Invalid email";
+        if (!form.message.trim() || form.message.trim().length < 10)
+          e.message = "Tell me a bit more (10+ chars)";
+        return e;
+      };
+      const onSubmit = (e) => {
+        e.preventDefault();
+        const e2 = validate();
+        setErrors(e2);
+        if (Object.keys(e2).length === 0) {
+          setSent(true);
+          setTimeout(() => {
+            setSent(false);
+            setForm({ name: "", email: "", subject: "Commission", message: "" });
+          }, 2400);
+        }
+      };
+      return (
+        <div className="page contact">
+          <div className="contact__head">
+            <h1>Let's <em>make</em> something — or just say hello.</h1>
+            <p className="contact__lede">
+              {PHOTOGRAPHER} accepts a small number of editorial and commercial commissions
+              each year. For prints, residencies, or licensing, the fastest route is email.
+              Replies usually within three working days.
+            </p>
+            <div className="contact__details">
+              <div className="row"><span className="k">Email</span>
+                <span className="v"><a href="mailto:hello@knj.studio">hello@knj.studio</a></span></div>
+              <div className="row"><span className="k">Studio</span>
+                <span className="v">Sonnenallee 142, 12059 Berlin</span></div>
+              <div className="row"><span className="k">Representation</span>
+                <span className="v">Available — DACH region</span></div>
+              <div className="row"><span className="k">Press</span>
+                <span className="v"><a href="#">Download EPK ↗</a></span></div>
+            </div>
+          </div>
+
+          <form className="contact__form" onSubmit={onSubmit}>
+            <div className="field">
+              <label>01 — Your name</label>
+              <input value={form.name} onChange={(e) => set("name", e.target.value)} placeholder="Marta Lindberg" />
+              {errors.name && <div className="field-error">{errors.name}</div>}
+            </div>
+            <div className="field">
+              <label>02 — Email</label>
+              <input value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="you@studio.com" />
+              {errors.email && <div className="field-error">{errors.email}</div>}
+            </div>
+            <div className="field">
+              <label>03 — Subject</label>
+              <select value={form.subject} onChange={(e) => set("subject", e.target.value)}>
+                <option>Commission</option>
+                <option>Editorial</option>
+                <option>Print purchase</option>
+                <option>Residency / collaboration</option>
+                <option>Press</option>
+                <option>Just saying hi</option>
+              </select>
+            </div>
+            <div className="field">
+              <label>04 — Message</label>
+              <textarea rows={4} value={form.message} onChange={(e) => set("message", e.target.value)}
+                        placeholder="What's the project, when, and where?" />
+              {errors.message && <div className="field-error">{errors.message}</div>}
+            </div>
+            <button type="submit" className={"submit " + (sent ? "is-sent" : "")}>
+              {sent ? "✓ Sent — talk soon" : "Send message →"}
+            </button>
+          </form>
+        </div>
+      );
+    }
+
+    /* ---------- App ---------- */
+    function App() {
+      const [page, setPage] = useState("home");
+      const [projectId, setProjectId] = useState(null);
+
+      const onNav = (id) => { setPage(id); setProjectId(null); window.scrollTo(0, 0); };
+      const openProject = (id) => { setProjectId(id); setPage("project"); window.scrollTo(0, 0); };
+
+      return (
+        <div className="app">
+          <Topbar page={page} onNav={onNav} />
+          {page === "home"    && <HomePage onOpenProject={openProject} />}
+          {page === "work"    && <WorkPage onOpenProject={openProject} />}
+          {page === "project" && (
+            <ProjectPage projectId={projectId} onOpenProject={openProject} onBack={() => onNav("work")} />
+          )}
+          {page === "contact" && <ContactPage />}
+          <Footer />
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>
